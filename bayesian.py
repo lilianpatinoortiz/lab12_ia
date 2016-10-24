@@ -210,17 +210,13 @@ for p in Probabilities:
 #     print 'ancestors:', node.ancestors
 #     print 'probabilities:', node.probabilities
             
-        
-def getValues():
-    
-    return
 
 #for each Query, get each state and sign
 # call the enumerationAsk function to figure out a probability.
 for query in Queries:
     query = query.replace(" ", "")
     
-    queryAssigment = []
+    queryAssignment = []
     evidence = []
     events = {}
     
@@ -230,7 +226,7 @@ for query in Queries:
         ev = query[getGiven+1:]
         
         if assigment.find(',') != -1:
-            queryAssigment = assigment.split(',')
+            queryAssignment = assigment.split(',')
             evidence = ev.split(',')
             
             #create dictionary of events
@@ -240,19 +236,26 @@ for query in Queries:
                 value = e[1:]
                 events.update({value:sign})
                 
-            print 'queryAssigment', queryAssigment
-            print 'events', events
+            # print 'queryAssignment', queryAssignment
+            # print 'events', events
             
             count = 0
             result = 1
-            for qry in queryAssigment:
+            for i in range(0,len(queryAssignment)):
                 if count == 0:
+                    typeRes = getSign(queryAssignment[i])
+                    variable = queryAssignment[i][1:]
                     result = enumerationAsk(states,bayesNet,variable,typeRes, events)
                     count+=1
                 else:
-                    
-                result *= 
-                
+                    sign = getSign(queryAssignment[i-1])
+                    value = queryAssignment[i-1][1:]
+                    events.update({value:sign})
+                    typeRes = getSign(queryAssignment[i])
+                    variable = queryAssignment[i][1:]
+                    result *= enumerationAsk(states,bayesNet,variable,typeRes, events)
+                    count+=1
+            print '%.7f'%result    
                 
             
             # result1 =  enumerationAsk(states,bayesNet,'Alarm',False,{'Earthquake':False,'MaryCalls':False,'Burglary':True})
