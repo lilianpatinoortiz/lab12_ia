@@ -1,4 +1,4 @@
-import sys 
+import sys
 import copy
 import fileinput
 from copy import deepcopy
@@ -38,7 +38,7 @@ def getProbability(poppedState, val, events, bayesNet): #looks for the % of prob
         prob = current.probabilities[tuple(permutation)] #look for % of prob of that pair
     if val==True:
         return prob
-    else: 
+    else:
         return 1.0-prob
 
 
@@ -48,7 +48,7 @@ def enumerationAsk(states,bayesNet,query,typeRes,events): #this is only for one 
     #true
     auxevents[query] = True #if the query were positive
     totalProb[True] = enumerateAll(states,auxevents,bayesNet)
-    
+
     #false
     auxevents[query] = False #if the query were false
     totalProb[False] = enumerateAll(states,auxevents,bayesNet)
@@ -58,13 +58,13 @@ def enumerationAsk(states,bayesNet,query,typeRes,events): #this is only for one 
 
 def enumerateAll(states,events,bayesNet):
     auxStates = deepcopy(states)
-    if len(auxStates) == 0: 
+    if len(auxStates) == 0:
         return 1.0
     Y = auxStates.pop(0)
     if Y in events: #if the state is not hidden , because it is in the events
         val = getProbability(Y,events[Y],events,bayesNet) * enumerateAll(auxStates,events,bayesNet)
         return val
-    else: #if the state is hidden and not in events, eliminate summation variables 
+    else: #if the state is hidden and not in events, eliminate summation variables
         total = 0
         events[Y] = True #add hidden to events with a value of True
         total += getProbability(Y,True,events,bayesNet) * enumerateAll(auxStates,events,bayesNet)
@@ -77,7 +77,7 @@ def enumerateAll(states,events,bayesNet):
 #this is like when you have a test and your total is the sum of the correct and
 #the incorrect ones and then if you want to know what percentage you got right and
 #wrong, you simply divide the total of wrong or right over the overall total.
-#this was necessary becuase we were getting a probability greater than 1. 
+#this was necessary becuase we were getting a probability greater than 1.
 #http://isites.harvard.edu/fs/docs/icb.topic540049.files/cs181_lec22_handout.pdf
 
 
@@ -88,7 +88,7 @@ def renormalize(totalProb,typeRes):
     total += totalProb[True]+totalProb[False]
     totalProb[True] /= total
     totalProb[False] /= total
-    return totalProb[typeRes]       
+    return totalProb[typeRes]
 def getSign(p):
     sign = p[0]
     if sign == "+":
@@ -96,7 +96,7 @@ def getSign(p):
     else:
         sign = False
     return sign
-       
+
 #main
 input = fileinput.input()
 aux = 0
@@ -113,27 +113,27 @@ for line in input:
         states2 = line.rstrip('\n')
         states2 = states2.split(", ")
         aux = 0
-        
+
     if aux == 2:
         if line != '\n':
             probability = line.rstrip('\n')
             Probabilities.append(probability)
         else:
             aux = 0
-    
+
     if aux == 3:
         if line != '\n':
             query = line.rstrip('\n')
             Queries.append(query)
         else:
             aux = 0
-    
+
     if line == "[Nodes]\n":
         aux = 1
-        
+
     if line == "[Probabilities]\n":
         aux = 2
-        
+
     if line == "[Queries]\n":
         aux = 3
 
@@ -150,7 +150,7 @@ for state in states2:
 for p in Probabilities:
     #remove blank spaces
     p = p.replace(" ", "")
-    
+
     if p.find('|') != -1:
         getGiven = p.find('|')
         variable = p[1:getGiven]
@@ -161,49 +161,49 @@ for p in Probabilities:
         variable = p[1:getEqual-1]
         if not variable in states:
             states.append(variable)
-    
+
     #find the corresponding node
     for node in bayesNet:
         if node.variable == variable:
             #get value, variable and ancestors
-            
+
             if p.find('|') != -1:
-                
-                #Get the value 
+
+                #Get the value
                 getEqual = p.find('=') + 1
                 value = p[getEqual:]
                 #get the ancestors
                 ancestors = []
-                    
+
                 if p.find(',') != -1:
                     conditions = p[getGiven+1: getEqual-1].split(',')
-                    
+
                     signs = []
                     for c in conditions:
                         sign = getSign(c)
                         signs.append(sign)
                         ancestor = c[1:]
                         ancestors.append(ancestor)
-                        
+
                     node.probabilities.update({tuple(signs):float(value)})
                     node.ancestors = ancestors
                 else:
                     #get the sign
                     sign = getSign(p[getGiven+1:])
-                    
+
                     #Get the value
                     getEqual = p.find('=') + 1
                     value = float(p[getEqual:])
-                    
+
                     ancestors.append(p[getGiven+2: getEqual-1])
                     node.ancestors = ancestors
-                    
+
                     node.probabilities.update({(sign,):value})
-                
+
             else:
                 #get the sign
                 sign = getSign(p)
-                
+
                 #Get the value
                 getEqual = p.find('=') + 1
                 value = float(p[getEqual:])
@@ -214,36 +214,36 @@ for p in Probabilities:
 #     print 'variable:', node.variable
 #     print 'ancestors:', node.ancestors
 #     print 'probabilities:', node.probabilities
-            
+
 
 #for each Query, get each state and sign
 # call the enumerationAsk function to figure out a probability.
 for query in Queries:
     query = query.replace(" ", "")
-    
+
     queryAssignment = []
     evidence = []
     events = {}
-    
+
     if query.find('|') != -1:
         getGiven = query.find('|')
         assigment = query[:getGiven]
         ev = query[getGiven+1:]
-        
+
         if assigment.find(',') != -1: #more than one query
             queryAssignment = assigment.split(',')
             evidence = ev.split(',')
-            
+
             #create dictionary of events
             signs = []
             for e in evidence:
                 sign = getSign(e)
                 value = e[1:]
                 events.update({value:sign})
-                
+
             # print 'queryAssignment', queryAssignment
             # print 'events', events
-            
+
             count = 0
             result = 1
             for i in range(0,len(queryAssignment)):
@@ -260,26 +260,26 @@ for query in Queries:
                     variable = queryAssignment[i][1:]
                     result *= enumerationAsk(states,bayesNet,variable,typeRes, events)
                     count+=1
-            print '%.7f'%result    
-                
+            print(('%.7f'%result).rstrip('0'))
+
         else: # only one query
             evidence = ev.split(',')
-        
+
             typeRes = getSign(assigment)
             variable = assigment[1:]
-            
+
             #create dictionary of events
             signs = []
             for e in evidence:
                 sign = getSign(e)
                 value = e[1:]
                 events.update({value:sign})
-            
+
             result =  enumerationAsk(states,bayesNet,variable,typeRes, events)
-            print '%.7f'%result
+            print(('%.7f'%result).rstrip('0'))
 
     else:
         typeRes = getSign(query)
         variable = query[1:]
         result =  enumerationAsk(states,bayesNet,variable,typeRes, {})
-        print '%.7f'%result
+        print(('%.7f'%result).rstrip('0'))
