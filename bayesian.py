@@ -243,7 +243,15 @@ for query in Queries:
             print 'queryAssigment', queryAssigment
             print 'events', events
             
+            count = 0
+            result = 1
             for qry in queryAssigment:
+                if count == 0:
+                    result = enumerationAsk(states,bayesNet,variable,typeRes, events)
+                    count+=1
+                else:
+                    
+                result *= 
                 
                 
             
