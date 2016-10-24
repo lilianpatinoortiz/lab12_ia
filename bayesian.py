@@ -104,13 +104,14 @@ bayesNet = []
 Queries = []
 Probabilities = []
 states = []
+states2 = []
 
 #Get Nodes, Probabilities and Queries
 for line in input:
     #Get Nodes
     if aux == 1:
-        states = line.rstrip('\n')
-        states = states.split(", ")
+        states2 = line.rstrip('\n')
+        states2 = states2.split(", ")
         aux = 0
         
     if aux == 2:
@@ -137,7 +138,7 @@ for line in input:
         aux = 3
 
 #create nodes
-for state in states:
+for state in states2:
     node = Node();
     node.variable = state
     node.ancestors = []
@@ -153,9 +154,13 @@ for p in Probabilities:
     if p.find('|') != -1:
         getGiven = p.find('|')
         variable = p[1:getGiven]
+        if not variable in states:
+            states.append(variable)
     else:
         getEqual = p.find('=') + 1
         variable = p[1:getEqual-1]
+        if not variable in states:
+            states.append(variable)
     
     #find the corresponding node
     for node in bayesNet:
@@ -225,7 +230,7 @@ for query in Queries:
         assigment = query[:getGiven]
         ev = query[getGiven+1:]
         
-        if assigment.find(',') != -1:
+        if assigment.find(',') != -1: #more than one query
             queryAssignment = assigment.split(',')
             evidence = ev.split(',')
             
@@ -257,13 +262,7 @@ for query in Queries:
                     count+=1
             print '%.7f'%result    
                 
-            
-            # result1 =  enumerationAsk(states,bayesNet,'Alarm',False,{'Earthquake':False,'MaryCalls':False,'Burglary':True})
-            # result2 =  enumerationAsk(states,bayesNet,'JohnCalls',True,{'Alarm':False,'Earthquake':False,'MaryCalls':False,'Burglary':True})
-            # print result1
-            # print result2
-            # print result1[False]*result2[True]
-        else:
+        else: # only one query
             evidence = ev.split(',')
         
             typeRes = getSign(assigment)
