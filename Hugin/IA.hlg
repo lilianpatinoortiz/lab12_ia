@@ -1,0 +1,93 @@
+Sun Oct 23 16:56:36 2016
+
+
+Moral links:
+
+    Marrying Burglary and Earthquake
+
+
+Triangulating prime component with 2 members:
+    JohnCalls, Alarm
+This component is a clique of cost 4
+
+Triangulating prime component with 2 members:
+    MaryCalls, Alarm
+This component is a clique of cost 4
+
+Triangulating prime component with 3 members:
+    Alarm, Earthquake, Burglary
+This component is a clique of cost 8
+
+
+Total cost of triangulation for all prime components is 16
+
+
+Elimination sequence:
+
+    Burglary
+    Earthquake
+    JohnCalls
+    MaryCalls
+    Alarm
+
+
+Cliques:
+
+Clique 3, 2 members, table size = 4:
+    Alarm, MaryCalls
+
+Clique 2, 2 members, table size = 4:
+    Alarm, JohnCalls
+
+Clique 1, 3 members, table size = 8:
+    Alarm, Earthquake, Burglary
+
+Total clique table size: 16
+
+
+The junction forest:
+
+Creating junction tree with clique 3 as root ...
+
+Cliques 2 and 3 linked, separator has 1 member and table size = 2:
+    Alarm
+
+Cliques 1 and 3 linked, separator has 1 member and table size = 2:
+    Alarm
+
+
+Assignment of potentials to cliques:
+
+    Node MaryCalls assigned to clique 3
+    Node JohnCalls assigned to clique 2
+    Node Alarm assigned to clique 1
+    Node Earthquake assigned to clique 1
+    Node Burglary assigned to clique 1
+
+
+Checking conditional probability potentials:
+
+    No errors found
+
+
+Beliefs for chance nodes:
+
+    MaryCalls:
+	True       0.0121848
+	False      0.987815
+
+    JohnCalls:
+	True       0.0526915
+	False      0.947309
+
+    Alarm:
+	True       0.00316644
+	False      0.996834
+
+    Earthquake:
+	True       0.002
+	False      0.998
+
+    Burglary:
+	True       0.001
+	False      0.999
